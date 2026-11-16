@@ -3,1065 +3,505 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>🍁 후쿠오카 3박 4일 맞춤 여행 플래너</title>
+  <title>후쿠오카 3박 4일 일정표</title>
   
-  <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root {
-      --primary: #1B365D;
-      --primary-hover: #12243F;
-      --primary-light: #EBF2FA;
-      --accent-red: #D9381E;
-      --accent-gold: #D97706;
-      --accent-green: #059669;
-      --d1-color: #8B5CF6;
-      --d2-color: #10B981;
-      --d3-color: #3B82F6;
-      --d4-color: #F59E0B;
-      --bg: #F8FAFC;
-      --card-bg: #FFFFFF;
-      --text-main: #0F172A;
-      --text-muted: #475569;
-      --border: #E2E8F0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --bg: #F8F9FA;
+      --card: #FFFFFF;
+      --text: #191F28;
+      --text-sub: #4E5968;
+      --text-mute: #8B95A1;
+      --border: #E5E8EB;
+      --border-light: #F2F4F6;
+      --primary: #191F28;
+      --accent: #E53E3E;
+      --blue: #2563EB;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    ship-page-badge {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
+    ship-page-badge { display: none !important; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", Roboto, sans-serif;
       background: var(--bg);
-      color: var(--text-main);
-      padding: 16px;
-      padding-bottom: calc(75px + var(--safe-bottom));
+      color: var(--text);
       line-height: 1.5;
+      letter-spacing: -0.3px;
+      padding-bottom: calc(75px + var(--safe-bottom));
     }
 
-    .app-container {
-      max-width: 1400px;
+    .app-wrap {
+      max-width: 900px;
       margin: 0 auto;
+      padding: 16px 14px;
     }
 
-    /* Hero Header */
-    .hero-header {
-      background: linear-gradient(135deg, #1B365D 0%, #0F172A 100%);
-      color: #fff;
-      padding: 22px 24px;
-      border-radius: 16px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-md);
-      position: relative;
+    /* Minimal Slim Header */
+    .top-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-main-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .header-sub-info {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 2px;
+      font-weight: 500;
     }
     .flight-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .hero-title {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .hero-subtitle {
-      font-size: 13px;
-      opacity: 0.9;
-      color: #CBD5E1;
-      margin-bottom: 12px;
-    }
-    .hero-chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .hero-chip {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 4px 10px;
+      background: #F2F4F6;
+      color: #333D4B;
+      padding: 4px 8px;
+      border-radius: 6px;
       font-size: 11px;
-      font-weight: 600;
-    }
-
-    /* Main Tab Navigation Bar */
-    .main-nav {
-      display: flex;
-      gap: 6px;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 6px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .main-nav::-webkit-scrollbar { display: none; }
-    .nav-btn {
-      flex: 1 0 auto;
-      padding: 10px 16px;
-      border: none;
-      background: transparent;
-      border-radius: 8px;
-      font-size: 13px;
       font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .nav-btn:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-    .nav-btn.active {
-      background: var(--primary);
-      color: #fff;
     }
 
-    /* Tab Panels */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* Mobile View Toggle Bar */
-    .mobile-view-bar {
-      display: none;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 4px;
+    /* Day Selector: Clean Segmented Control */
+    .day-tabs-wrap {
       margin-bottom: 12px;
-      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      background: rgba(248, 249, 250, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 2px 0;
     }
-    .view-toggle-btn {
+    .day-tabs {
+      display: flex;
+      background: #E5E8EB;
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .day-tab-btn {
       flex: 1;
-      padding: 8px 12px;
+      padding: 7px 2px;
       border: none;
       background: transparent;
       border-radius: 7px;
       font-size: 12px;
-      font-weight: 700;
-      color: #64748B;
+      font-weight: 600;
+      color: var(--text-sub);
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.15s ease;
       text-align: center;
+      white-space: nowrap;
     }
-    .view-toggle-btn.active {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    /* Grid Layout: Desktop vs Mobile */
-    .map-layout-grid {
-      display: grid;
-      grid-template-columns: 1fr 500px;
-      gap: 18px;
-      align-items: start;
+    .day-tab-btn.active {
+      background: var(--card);
+      color: var(--text);
+      font-weight: 800;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
-    /* Responsive Breakdown for Tablets and Mobile Phones */
-    @media (max-width: 1024px) {
-      body { padding: 10px; }
-      .hero-header { padding: 16px 14px; border-radius: 12px; }
-      .hero-title { font-size: 18px; }
-      .mobile-view-bar { display: flex; }
-      .map-layout-grid {
-        display: flex;
-        flex-direction: column;
-      }
-      /* In Mobile Split View, Map is placed above timeline */
-      .itinerary-col {
-        order: 2;
-        width: 100%;
-      }
-      .map-col {
-        order: 1;
-        width: 100%;
-        margin-bottom: 14px;
-      }
-      .map-sticky-panel {
-        position: relative !important;
-        top: 0 !important;
-      }
-      #leafletMap {
-        height: 280px !important;
-        transition: height 0.3s ease;
-      }
-      #leafletMap.expanded {
-        height: 60vh !important;
-      }
-      /* Mobile view state classes */
-      body.mobile-mode-list .map-col { display: none !important; }
-      body.mobile-mode-map .itinerary-col { display: none !important; }
-      body.mobile-mode-map #leafletMap { height: 75vh !important; }
-    }
-
-    @media (max-width: 600px) {
-      .places-grid, .hotel-grid {
-        grid-template-columns: 1fr;
-      }
-      .hero-title { font-size: 16px; }
-      .view-toggle-btn { padding: 6px 4px; font-size: 11px; }
-      .mobile-bottom-bar { padding: 6px 2px calc(6px + var(--safe-bottom)); }
-      .bottom-bar-btn { font-size: 10px; }
-      .bottom-bar-icon { font-size: 16px; }
-    }
-
-    /* Sticky Real Map Container */
-    .map-sticky-panel {
-      position: sticky;
-      top: 14px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow-md);
-    }
-    .map-header {
-      padding: 10px 14px;
-      background: #FFFFFF;
-      border-bottom: 1px solid var(--border);
+    /* Minimal Toggle: Map View vs List View */
+    .view-switch-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
+      margin-bottom: 10px;
+      padding: 0 2px;
     }
-    .map-header-title {
+    .day-title-text {
       font-size: 14px;
       font-weight: 800;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      color: var(--text);
     }
-    .map-actions-group {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .map-sim-btn {
-      background: var(--accent-red);
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 2px 4px rgba(217, 56, 30, 0.25);
-    }
-    .map-expand-btn {
-      background: #F1F5F9;
+    .map-toggle-btn {
+      background: var(--card);
       border: 1px solid var(--border);
-      color: #334155;
-      padding: 5px 9px;
+      padding: 5px 10px;
       border-radius: 16px;
       font-size: 11px;
       font-weight: 700;
+      color: var(--text-sub);
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+    }
+
+    /* Map Box */
+    .map-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+    .map-container.collapsed {
+      display: none;
     }
     #leafletMap {
       width: 100%;
-      height: 520px;
+      height: 250px;
       background: #E5E7EB;
-      z-index: 1;
     }
-    .map-mode-bar {
-      display: flex;
-      gap: 5px;
-      padding: 7px 10px;
-      background: #F8FAFC;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+
+    /* Timeline Cards: Highly Readable & Clean */
+    .day-block {
+      margin-bottom: 24px;
     }
-    .map-mode-bar::-webkit-scrollbar { display: none; }
-    .mode-chip {
-      flex: 0 0 auto;
-      padding: 4px 9px;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #FFFFFF;
+    .day-banner {
+      background: var(--card);
       border: 1px solid var(--border);
-      color: #475569;
-      white-space: nowrap;
-    }
-    .mode-chip.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .map-day-legend {
-      display: flex;
-      gap: 5px;
-      padding: 8px 12px;
-      background: #FFFFFF;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-      font-size: 11px;
-    }
-    .legend-chip {
-      padding: 3px 8px;
+      border-left: 4px solid var(--primary);
       border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1px solid transparent;
-      white-space: nowrap;
-    }
-    .legend-chip.d1 { background: #EDE9FE; color: #6D28D9; border-color: #DDD6FE; }
-    .legend-chip.d2 { background: #D1FAE5; color: #047857; border-color: #A7F3D0; }
-    .legend-chip.d3 { background: #DBEAFE; color: #1D4ED8; border-color: #BFDBFE; }
-    .legend-chip.d4 { background: #FEF3C7; color: #B45309; border-color: #FDE68A; }
-    .legend-chip.all-places { background: #FFE4E6; color: #BE123C; border-color: #FECDD3; }
-    .legend-chip.active { box-shadow: 0 0 0 2px var(--primary); }
-
-    /* Day Selector Pills */
-    .day-selector-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 12px 14px;
       margin-bottom: 12px;
-      gap: 8px;
-      flex-wrap: wrap;
     }
-    .day-pills {
-      display: flex;
-      gap: 5px;
-      overflow-x: auto;
-      width: 100%;
-      padding-bottom: 2px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+    .day-banner-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2px;
     }
-    .day-pills::-webkit-scrollbar { display: none; }
-    .day-pill-btn {
-      flex: 0 0 auto;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 6px 12px;
+    .day-banner-desc {
       font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .day-pill-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .day-pill-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-    /* Itinerary Day Section */
-    .day-section { margin-bottom: 24px; }
-    .day-header-card {
-      background: var(--card-bg);
-      border-left: 5px solid var(--primary);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow-sm);
-      border-top: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .day-header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 4px;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .day-badge-title { font-size: 16px; font-weight: 800; color: var(--primary); }
-    .day-flight-box {
-      background: #FEF2F2;
-      border: 1px solid #FECACA;
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #991B1B;
-      margin-bottom: 6px;
+      color: var(--text-sub);
       line-height: 1.4;
     }
-    .day-theme-title { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 3px; }
-    .day-summary-text { font-size: 12px; color: var(--text-muted); }
 
-    /* Timeline Cards */
-    .timeline-container {
-      position: relative;
-      padding-left: 20px;
+    .timeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .timeline-container::before {
-      content: "";
-      position: absolute;
-      left: 7px;
-      top: 12px;
-      bottom: 18px;
-      width: 2px;
-      background: #CBD5E1;
-    }
-    .timeline-item {
-      position: relative;
-      margin-bottom: 14px;
-    }
-    .timeline-dot {
-      position: absolute;
-      left: -20px;
-      top: 12px;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      border: 3px solid var(--primary);
-      z-index: 2;
-    }
-    .timeline-card {
-      background: var(--card-bg);
+
+    .t-card {
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 13px 15px;
-      box-shadow: var(--shadow-sm);
+      padding: 14px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.15s ease;
     }
-    .timeline-card:hover {
-      border-color: var(--primary);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
+    .t-card:hover {
+      border-color: #CBD5E1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
-    .timeline-card.focused {
-      border-color: var(--accent-red);
-      box-shadow: 0 0 0 3px rgba(217, 56, 30, 0.15), var(--shadow-md);
+    .t-card.focused {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.12);
     }
-    .card-top-bar {
+    .t-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 6px;
-      flex-wrap: wrap;
-      gap: 4px;
     }
-    .time-badge {
-      font-size: 11px;
+    .t-time {
+      font-size: 12px;
       font-weight: 800;
-      color: #1E293B;
-      background: #F1F5F9;
+      color: #333D4B;
+      background: #F2F4F6;
       padding: 2px 7px;
       border-radius: 6px;
     }
-    .category-badge {
+    .t-cat {
       font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 600;
+      color: var(--text-mute);
     }
-    .card-title {
-      font-size: 14px;
+    .t-title {
+      font-size: 15px;
       font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 5px;
+      color: var(--text);
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
-    .saved-pill {
-      background: #FEF3C7;
-      color: #92400E;
+    .t-tag {
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
-      border: 1px solid #FDE68A;
     }
-    .knot-pill {
-      background: #EDE9FE;
-      color: #6D28D9;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid #DDD6FE;
-    }
-    .seiryu-pill {
-      background: #D1FAE5;
-      color: #047857;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid #A7F3D0;
-    }
-    .waku-pill {
-      background: #DBEAFE;
-      color: #1D4ED8;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid #BFDBFE;
-    }
-    .card-desc {
+    .t-tag.hotel { background: #F3E8FF; color: #7E22CE; }
+    .t-tag.onsen { background: #DCFCE7; color: #15803D; }
+    .t-tag.tour { background: #DBEAFE; color: #1D4ED8; }
+    .t-tag.food { background: #FEF3C7; color: #B45309; }
+
+    .t-desc {
       font-size: 12px;
-      color: #334155;
-      margin-bottom: 6px;
+      color: var(--text-sub);
       line-height: 1.45;
+      margin-bottom: 6px;
     }
-    .card-tip-box {
-      background: #FFFBEB;
-      border-left: 3px solid #F59E0B;
-      padding: 6px 9px;
-      border-radius: 4px;
+    .t-tip {
       font-size: 11px;
-      color: #92400E;
-      margin-top: 4px;
+      color: #6B7280;
+      background: #F9FAFB;
+      border-left: 2px solid #D1D5DB;
+      padding: 4px 8px;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.4;
     }
-    .card-footer-actions {
+    .t-action-link {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-      padding-top: 6px;
-      border-top: 1px dashed var(--border);
-    }
-    .map-pan-btn {
-      background: var(--primary-light);
-      color: var(--primary);
+      justify-content: flex-end;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--blue);
       font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: 11px;
     }
 
-    /* Interactive Map Markers & Motion */
-    .interactive-marker-wrapper {
-      background: transparent !important;
-      border: none !important;
+    /* Places & Hotel Simple Cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
     }
-    .pin-anchor {
-      position: relative;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    /* 1. Default Idle Minimal Dot (Clean, Uncluttered Map) */
-    .pin-bubble.pin-interactive {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--category-color, #1B365D);
-      border: 2px solid #FFFFFF;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
-    }
-    .pin-bubble.pin-interactive.is-tour {
-      width: 16px;
-      height: 16px;
-      box-shadow: 0 2px 8px rgba(27, 54, 93, 0.5);
-    }
-    .pin-bubble.pin-interactive.is-tour::after {
-      content: "★";
-      font-size: 8px;
-      color: #FFFFFF;
-      line-height: 1;
-    }
-    .pin-bubble.pin-interactive.is-hotel {
-      width: 17px;
-      height: 17px;
-      background: #6D28D9 !important;
-      box-shadow: 0 2px 8px rgba(109, 40, 217, 0.6);
-    }
-    .pin-bubble.pin-interactive.is-hotel::after {
-      content: "🏨";
-      font-size: 9px;
-      line-height: 1;
-    }
-
-    /* Number hidden in idle interactive mode */
-    .pin-bubble.pin-interactive .pin-number {
-      opacity: 0;
-      transform: scale(0);
-      font-size: 0px;
-      font-weight: 800;
-      color: #FFFFFF;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      pointer-events: none;
-    }
-
-    /* Hover state on desktop */
-    .pin-bubble.pin-interactive:hover {
-      transform: scale(1.4) translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
-    }
-    .pin-anchor:hover .pin-floating-tag {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(-24px);
-    }
-
-    /* 2. ACTIVE STATE (Clicked / Tapped): Spring Bounce & Number Pop */
-    .pin-bubble.pin-interactive.pin-active {
-      width: 32px !important;
-      height: 32px !important;
-      border-radius: 50% !important;
-      background: var(--category-color, #D9381E) !important;
-      border: 2.5px solid #FFFFFF !important;
-      box-shadow: 0 0 0 5px rgba(217, 56, 30, 0.35), 0 8px 18px rgba(0, 0, 0, 0.45) !important;
-      animation: pinSpringPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-      z-index: 9999 !important;
-    }
-    .pin-bubble.pin-interactive.pin-active.is-tour::after,
-    .pin-bubble.pin-interactive.pin-active.is-hotel::after {
-      display: none;
-    }
-    .pin-bubble.pin-interactive.pin-active .pin-number {
-      opacity: 1 !important;
-      transform: scale(1) !important;
-      font-size: 11px !important;
-      font-weight: 800 !important;
-      color: #FFFFFF !important;
-    }
-
-    /* Floating Tag for place name */
-    .pin-floating-tag {
-      position: absolute;
-      left: 50%;
-      bottom: 100%;
-      transform: translateX(-50%) translateY(-6px);
-      background: rgba(15, 23, 42, 0.94);
-      color: #FFFFFF;
-      padding: 4px 9px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-      z-index: 10000;
-    }
-    .pin-floating-tag::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 4px;
-      border-style: solid;
-      border-color: rgba(15, 23, 42, 0.94) transparent transparent transparent;
-    }
-    .pin-bubble.pin-active + .pin-floating-tag {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(-34px);
-    }
-
-    /* 3. ALWAYS SHOW ALL NUMBERS MODE */
-    .pin-bubble.pin-always-number {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--category-color, #1B365D);
-      border: 2px solid #FFFFFF;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-    .pin-bubble.pin-always-number.is-tour { width: 26px; height: 26px; }
-    .pin-bubble.pin-always-number .pin-number {
-      opacity: 1;
-      transform: scale(1);
-      font-size: 10px;
-      font-weight: 800;
-      color: #FFFFFF;
-    }
-    .pin-bubble.pin-always-number.pin-active {
-      width: 30px !important;
-      height: 30px !important;
-      box-shadow: 0 0 0 5px rgba(217, 56, 30, 0.35), 0 8px 16px rgba(0,0,0,0.4);
-      transform: scale(1.15) translateY(-3px);
-      animation: pinSpringPop 0.35s ease forwards;
-    }
-
-    @keyframes pinSpringPop {
-      0% { transform: scale(0.6) translateY(0); }
-      50% { transform: scale(1.32) translateY(-10px); }
-      75% { transform: scale(1.05) translateY(-4px); }
-      100% { transform: scale(1.15) translateY(-5px); }
-    }
-
-    /* Card Highlight when Map Pin is clicked */
-    .card-pin-highlight {
-      border-color: #D9381E !important;
-      box-shadow: 0 0 0 3px rgba(217, 56, 30, 0.3), var(--shadow-md) !important;
-      animation: cardPulseGlow 0.7s ease;
-    }
-    @keyframes cardPulseGlow {
-      0% { transform: scale(0.98); }
-      50% { transform: scale(1.02); }
-      100% { transform: scale(1); }
-    }
-
-    /* Pin Mode Switcher Subbar */
-    .map-subbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 12px;
-      background: #F1F5F9;
-      border-bottom: 1px solid var(--border);
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .pin-mode-toggle {
-      display: flex;
-      background: #E2E8F0;
-      border-radius: 8px;
-      padding: 2px;
-      gap: 2px;
-    }
-    .pin-toggle-btn {
-      border: none;
-      background: transparent;
-      padding: 4px 9px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #475569;
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-    .pin-toggle-btn.active {
-      background: #FFFFFF;
-      color: var(--primary);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    }
-    .pin-helper-text {
-      font-size: 11px;
-      color: #64748B;
-      font-weight: 600;
-    }
-
-    /* Legacy support for simulation marker */
-    .custom-marker {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      color: #fff;
-      font-weight: 800;
-      font-size: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.35);
-      border: 2px solid #fff;
-      cursor: pointer;
-    }
-    .sim-moving-marker {
-      background: #D9381E !important;
-      border: 3px solid #FFF !important;
-      box-shadow: 0 0 16px rgba(217, 56, 30, 0.9) !important;
-      animation: pulse 0.9s infinite alternate;
-    }
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.35); }
-    }
-
-    /* Places & Hotel Grids */
-    .filter-bar { display: flex; gap: 5px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 3px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-    .filter-bar::-webkit-scrollbar { display: none; }
-    .filter-btn { flex: 0 0 auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 5px 11px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
-    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .search-box { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; margin-bottom: 12px; outline: none; }
-    .search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(27,54,93,0.1); }
-    .places-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
-    .place-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; }
-    .place-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-    .place-name { font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; }
-    .rating-star { font-size: 12px; font-weight: 800; color: #DC2626; background: #FEF2F2; padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
-    .place-cat-tag { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
-    .place-desc { font-size: 12px; color: #334155; line-height: 1.45; margin-bottom: 10px; }
-    .place-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 8px; font-size: 11px; }
-    .day-match-pill { background: #F1F5F9; color: var(--primary); font-weight: 700; padding: 2px 7px; border-radius: 4px; }
-
-    .hotel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-    .hotel-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow-sm); position: relative; }
-    .hotel-card.recommended { border: 2px solid #6D28D9; box-shadow: 0 4px 14px rgba(109,40,217,0.15); }
-    .hotel-card.recommended::before {
-      content: "⭐ 확정 숙소 (3박 베이스캠프)";
-      position: absolute;
-      top: -10px;
-      right: 14px;
-      background: #6D28D9;
-      color: #fff;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 10px;
+    .p-card {
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .hotel-title { font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 2px; }
-    .hotel-ename { font-size: 11px; color: #64748B; margin-bottom: 8px; }
-    .hotel-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
-    .h-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
-    .h-badge.onsen { background: #DCFCE7; color: #15803D; }
-    .h-badge.price { background: #FEF3C7; color: #B45309; }
-    .h-badge.loc { background: #F1F5F9; color: #475569; }
-    .hotel-desc { font-size: 12px; color: #334155; line-height: 1.5; margin-bottom: 10px; }
-    .hotel-reason-box { background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: var(--primary); font-weight: 600; }
+    .p-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .p-sub {
+      font-size: 11px;
+      color: var(--text-mute);
+      margin-bottom: 6px;
+    }
+    .p-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .p-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-light);
+      font-size: 11px;
+    }
 
-    /* Checklist */
-    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
-    .check-box { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--primary); cursor: pointer; }
-    .check-label { font-size: 13px; font-weight: 700; color: var(--text-main); }
-    .check-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+    /* Interactive Marker Styles */
+    .interactive-marker-wrapper { background: transparent !important; border: none !important; }
+    .pin-anchor { position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .pin-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #333D4B;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .pin-dot.is-active {
+      width: 26px !important;
+      height: 26px !important;
+      background: var(--accent) !important;
+      color: #fff !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.25), 0 4px 10px rgba(0,0,0,0.3) !important;
+      transform: translateY(-4px) !important;
+    }
 
-    /* Mobile Fixed Bottom Navigation Bar */
-    .mobile-bottom-bar {
-      display: none;
+    /* Bottom Tab Bar */
+    .bottom-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
       border-top: 1px solid var(--border);
-      padding: 8px 16px;
-      padding-bottom: calc(8px + var(--safe-bottom));
-      z-index: 99999999 !important;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+      padding: 6px 12px calc(6px + var(--safe-bottom));
+      z-index: 1000;
+      display: flex;
       justify-content: space-around;
       align-items: center;
     }
-    @media (max-width: 1024px) {
-      .mobile-bottom-bar { display: flex; }
-    }
-    .bottom-bar-btn {
+    .bar-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
       background: none;
       border: none;
-      color: #64748B;
-      font-size: 11px;
+      color: var(--text-mute);
+      font-size: 10px;
       font-weight: 700;
       cursor: pointer;
-      gap: 3px;
+      gap: 2px;
       padding: 4px 8px;
+    }
+    .bar-btn.active {
+      color: var(--text);
+    }
+    .bar-icon { font-size: 16px; }
+
+    /* Checklist */
+    .chk-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .chk-box { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--primary); }
+    .chk-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .chk-desc { font-size: 11px; color: var(--text-mute); }
+
+    .search-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      transition: all 0.15s;
+      font-size: 13px;
+      margin-bottom: 10px;
+      outline: none;
+      background: var(--card);
     }
-    .bottom-bar-btn.active {
-      color: var(--primary);
-    }
-    .bottom-bar-icon {
-      font-size: 18px;
+    .search-input:focus {
+      border-color: var(--text);
     }
   </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-wrap">
 
-  <!-- Header -->
-  <div class="hero-header">
+  <!-- Minimal Header -->
+  <header class="top-header">
+    <div>
+      <div class="header-main-title">
+        🍁 후쿠오카 3박 4일
+      </div>
+      <div class="header-sub-info">
+        11/16 ~ 11/19 · 숙소: The Knot Fukuoka (다이묘)
+      </div>
+    </div>
     <div class="flight-pill">
-      ✈️ 11/16 16:20 한국출발 ➜ 11/19 17:50 한국도착
+      16:20 ✈️ 17:50
     </div>
-    <div class="hero-title">🍁 후쿠오카 3박 4일 맞춤 여행 플래너</div>
-    <div class="hero-subtitle">The Knot Hotel 확정 · 11/17 세이류 온천(13:50) · 11/18 히타&유후인 와쿠와쿠 투어 반영</div>
-    <div class="hero-chips">
-      <div class="hero-chip">🏨 The Knot Fukuoka</div>
-      <div class="hero-chip">♨️ 11/17 세이류 온천 (13:50)</div>
-      <div class="hero-chip">🚌 11/18 히타&유후인 투어</div>
-      <div class="hero-chip">🗺️ 구글 실제 지도 38개 핀</div>
-    </div>
-  </div>
+  </header>
 
-  <!-- Navigation Tabs -->
-  <div class="main-nav">
-    <button class="nav-btn active" onclick="showTab('itinerary')">🗓️ 일정표 & 실제 지도</button>
-    <button class="nav-btn" onclick="showTab('food')">🍲 밥집 (31곳)</button>
-    <button class="nav-btn" onclick="showTab('tour')">🗺️ 핵심 코스 (5곳)</button>
-    <button class="nav-btn" onclick="showTab('hotels')">🏨 확정 숙소 & 비교</button>
-    <button class="nav-btn" onclick="showTab('checklist')">✈️ 비행 & 체크리스트</button>
-  </div>
-
-  <!-- Tab 1: Itinerary & Map Side-by-Side (Mobile Adaptive!) -->
-  <div id="tab-itinerary" class="tab-panel active">
-    
-    <!-- Mobile View Mode Toggle Bar (Appears on Mobile only) -->
-    <div class="mobile-view-bar">
-      <button class="view-toggle-btn active" id="btnViewSplit" onclick="setMobileView('split')">🌓 지도+일정 동시보기</button>
-      <button class="view-toggle-btn" id="btnViewList" onclick="setMobileView('list')">📋 일정 목록만</button>
-      <button class="view-toggle-btn" id="btnViewMap" onclick="setMobileView('map')">🗺️ 큰 지도로 보기</button>
-    </div>
-
-    <div class="map-layout-grid">
-      
-      <!-- Timeline Column -->
-      <div class="itinerary-col">
-        <div class="day-selector-bar">
-          <div class="day-pills">
-            <button class="day-pill-btn active" onclick="filterDay('all')">전체 일정</button>
-            <button class="day-pill-btn" onclick="filterDay(1)">1일차 (11/16 저녁도착)</button>
-            <button class="day-pill-btn" onclick="filterDay(2)">2일차 (11/17 세이류온천)</button>
-            <button class="day-pill-btn" onclick="filterDay(3)">3일차 (11/18 히타·유후인)</button>
-            <button class="day-pill-btn" onclick="filterDay(4)">4일차 (11/19 귀국)</button>
-          </div>
-        </div>
-
-        <div id="itineraryContent">
-          <!-- Rendered via JS -->
-        </div>
+  <!-- View 1: Itinerary -->
+  <section id="view-itinerary" class="tab-view">
+    <!-- Day Selector -->
+    <div class="day-tabs-wrap">
+      <div class="day-tabs">
+        <button class="day-tab-btn active" onclick="selectDay('all')">전체</button>
+        <button class="day-tab-btn" onclick="selectDay(1)">1일차</button>
+        <button class="day-tab-btn" onclick="selectDay(2)">2일차(온천)</button>
+        <button class="day-tab-btn" onclick="selectDay(3)">3일차(투어)</button>
+        <button class="day-tab-btn" onclick="selectDay(4)">4일차</button>
       </div>
-
-      <!-- Real Map Column (Sticky on Desktop, Top on Mobile) -->
-      <div class="map-col">
-        <div class="map-sticky-panel">
-          <div class="map-header">
-            <div class="map-header-title">
-              📍 후쿠오카 실제 지도 (인터랙티브)
-            </div>
-            <div class="map-actions-group">
-              <button class="map-expand-btn" id="mapExpandBtn" onclick="toggleMapExpand()">
-                ⤢ 지도 크기 조절
-              </button>
-              <button class="map-sim-btn" id="playSimBtn" onclick="toggleRouteSimulation()">
-                ▶ 동선 재생
-              </button>
-            </div>
-          </div>
-
-          <div class="map-subbar">
-            <div class="pin-mode-toggle">
-              <button class="pin-toggle-btn active" id="btnPinInteractive" onclick="setPinNumberMode('interactive')">
-                ✨ 터치 시 번호 표시 (미니멀)
-              </button>
-              <button class="pin-toggle-btn" id="btnPinAlways" onclick="setPinNumberMode('always')">
-                🔢 모든 번호 상시 표시
-              </button>
-            </div>
-            <div class="pin-helper-text" id="pinHelperMsg">
-              💡 지도의 점이나 아래 일정을 탭하면 번호와 정보가 튀어나옵니다
-            </div>
-          </div>
-
-          <div class="map-mode-bar">
-            <span class="mode-chip active" id="chipModeAll" onclick="setMapDisplayMode('all')">📍 38개 전체 핀</span>
-            <span class="mode-chip" id="chipModeRoute" onclick="setMapDisplayMode('route')">🛣️ 일정 동선</span>
-            <span class="mode-chip" id="chipModeYakiniku" onclick="setMapDisplayMode('야키니쿠')">🥩 야키니쿠</span>
-            <span class="mode-chip" id="chipModeRamen" onclick="setMapDisplayMode('라멘')">🍜 라멘</span>
-            <span class="mode-chip" id="chipModeSushi" onclick="setMapDisplayMode('스시/해산물')">🍣 스시</span>
-          </div>
-
-          <div id="leafletMap"></div>
-
-          <div class="map-day-legend">
-            <span class="legend-chip d1" onclick="filterDay(1)">● 1일차</span>
-            <span class="legend-chip d2" onclick="filterDay(2)">● 2일차 (세이류)</span>
-            <span class="legend-chip d3" onclick="filterDay(3)">● 3일차 (히타·유후인)</span>
-            <span class="legend-chip d4" onclick="filterDay(4)">● 4일차 (공항)</span>
-            <span class="legend-chip all-places" onclick="fitDowntown()">🔍 텐진/숙소 줌</span>
-          </div>
-        </div>
-      </div>
-
     </div>
 
-  </div>
-
-  <!-- Tab 2: Food Grid -->
-  <div id="tab-food" class="tab-panel">
-    <div style="margin-bottom: 12px;">
-      <input type="text" id="foodSearch" class="search-box" placeholder="가게명, 음식 종류 검색 (예: 야키니쿠, 신신라멘, 텐진)..." oninput="renderFood()">
-      <div class="filter-bar" id="foodFilterBar"></div>
+    <!-- Map Toggle Row -->
+    <div class="view-switch-row">
+      <span class="day-title-text" id="dayStatusText">전체 3박 4일 일정</span>
+      <button class="map-toggle-btn" id="mapToggleBtn" onclick="toggleMap()">
+        🗺️ 지도 접기
+      </button>
     </div>
-    <div class="places-grid" id="foodGrid"></div>
-  </div>
 
-  <!-- Tab 3: Tour Grid -->
-  <div id="tab-tour" class="tab-panel">
-    <div class="places-grid" id="tourGrid"></div>
-  </div>
-
-  <!-- Tab 4: Hotels Grid -->
-  <div id="tab-hotels" class="tab-panel">
-    <div class="hotel-grid" id="hotelGrid"></div>
-  </div>
-
-  <!-- Tab 5: Checklist -->
-  <div id="tab-checklist" class="tab-panel">
-    <div style="max-width: 700px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow-sm);">
-      <h3 style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 10px;">📋 출국 전 준비물 체크리스트 (탭하여 체크)</h3>
-      <div id="checklistItems"></div>
+    <!-- Map Box -->
+    <div class="map-container" id="mapBox">
+      <div id="leafletMap"></div>
     </div>
-  </div>
+
+    <!-- Timeline Cards -->
+    <div id="itineraryCardsWrap"></div>
+  </section>
+
+  <!-- View 2: Food (31 Places) -->
+  <section id="view-food" class="tab-view" style="display:none;">
+    <input type="text" id="foodInput" class="search-input" placeholder="밥집 검색 (예: 신신라멘, 야키니쿠, 텐진)..." oninput="filterFoodList()">
+    <div class="cards-grid" id="foodCardsWrap"></div>
+  </section>
+
+  <!-- View 3: Tour (Key Spots) -->
+  <section id="view-tour" class="tab-view" style="display:none;">
+    <div class="cards-grid" id="tourCardsWrap"></div>
+  </section>
+
+  <!-- View 4: Hotel -->
+  <section id="view-hotels" class="tab-view" style="display:none;">
+    <div class="cards-grid" id="hotelCardsWrap"></div>
+  </section>
+
+  <!-- View 5: Checklist -->
+  <section id="view-checklist" class="tab-view" style="display:none;">
+    <div id="checkCardsWrap"></div>
+  </section>
 
 </div>
 
-<!-- Mobile Fixed Bottom Navigation Bar -->
-<div class="mobile-bottom-bar">
-  <button class="bottom-bar-btn active" id="bNavItinerary" onclick="showTab('itinerary'); setMobileView('split');">
-    <span class="bottom-bar-icon">🗓️</span>
-    <span>일정&지도</span>
+<!-- Bottom Navigation Bar -->
+<nav class="bottom-bar">
+  <button class="bar-btn active" id="btnNavItinerary" onclick="switchNav('itinerary')">
+    <span class="bar-icon">🗓️</span>
+    <span>일정</span>
   </button>
-  <button class="bottom-bar-btn" id="bNavFood" onclick="showTab('food')">
-    <span class="bottom-bar-icon">🍲</span>
+  <button class="bar-btn" id="btnNavFood" onclick="switchNav('food')">
+    <span class="bar-icon">🍲</span>
     <span>밥집31</span>
   </button>
-  <button class="bottom-bar-btn" id="bNavTour" onclick="showTab('tour')">
-    <span class="bottom-bar-icon">🗺️</span>
-    <span>코스5</span>
+  <button class="bar-btn" id="btnNavTour" onclick="switchNav('tour')">
+    <span class="bar-icon">🗺️</span>
+    <span>코스</span>
   </button>
-  <button class="bottom-bar-btn" id="bNavHotels" onclick="showTab('hotels')">
-    <span class="bottom-bar-icon">🏨</span>
+  <button class="bar-btn" id="btnNavHotels" onclick="switchNav('hotels')">
+    <span class="bar-icon">🏨</span>
     <span>숙소</span>
   </button>
-  <button class="bottom-bar-btn" id="bNavCheck" onclick="showTab('checklist')">
-    <span class="bottom-bar-icon">✈️</span>
+  <button class="bar-btn" id="btnNavCheck" onclick="switchNav('checklist')">
+    <span class="bar-icon">✈️</span>
     <span>준비물</span>
   </button>
-</div>
+</nav>
 
 <script>
   const daysData = [{"day": 1, "date": "11월 16일 (월)", "theme": "후쿠오카 입성 ➜ The Knot 체크인 ➜ 마에다야 모츠나베 디너 ➜ 나카스 강변 야타이", "summary": "16:20 비행기로 출국하여 17:45 도착! 지하철 공항선(13분)으로 다이묘 중심 'The Knot Fukuoka'에 직행 체크인하고, 연예인 단골 모츠나베와 낭만 포장마차(야타이)로 화려하게 첫날을 여는 일정", "flight_info": "✈️ 출국 항공편: 16:20 한국 출발 ➜ 17:45 후쿠오카 공항 도착 예정", "color": "#8B5CF6", "timeline": [{"time": "16:20 ~ 17:45", "category": "✈️ 항공 / 출국", "title": "한국 출발 ➜ 후쿠오카 공항 도착 (비행 약 1시간 15분)", "lat": 33.5859, "lng": 130.4507, "is_saved": false, "saved_type": null, "rating": null, "desc": "16:20 한국 출발 ➜ 17:45경 후쿠오카 공항 국제선 터미널 착륙. 비짓재팬웹 QR 수속 및 수하물 수령 (약 40분 소요).", "tip": "💡 비짓재팬웹 QR코드를 미리 스마트폰 캡처본으로 저장해두시면 입국 심사가 매우 빠릅니다.", "query": "후쿠오카 공항"}, {"time": "18:30 ~ 19:10", "category": "🚅 지하철 / 숙소 체크인", "title": "공항선 지하철 ➜ The Knot Fukuoka (더 낫 후쿠오카) 체크인", "lat": 33.5866, "lng": 130.3942, "is_saved": true, "saved_type": "⭐ 확정 숙소", "rating": "4.6", "desc": "국제선 앞 무료 셔틀버스 ➜ 국내선 지하철역 이동 후 공항선 탑승. 환승 없이 13분 만에 아카사카역(또는 텐진역) 도착! 다이묘 중심 'The Knot Hotel'에 체크인하고 짐 풀기.", "tip": "💡 트래블로그/트래블월렛 카드로 개찰구 터치 탑승 가능(260엔). 호텔 1층 라운지 바 분위기가 매우 힙합니다.", "query": "THE KNOT FUKUOKA"}, {"time": "19:30 ~ 21:00", "category": "🍲 저녁 만찬 / 모츠나베", "title": "하카타 모츠나베 마에다야 이마이즈미점", "lat": 33.5855, "lng": 130.3995, "is_saved": true, "saved_type": "저장 밥집 #12", "rating": "4.5", "desc": "숙소(The Knot)에서 도보 7분! 유명 연예인과 현지인들의 원픽 모츠나베 전문점. 된장(미소) 베이스의 깊고 진한 국물과 통통한 한우 대창, 짬뽕면 사리 마무리.", "tip": "💡 구글 리뷰 1,500개 돌파 명소. 웨이팅이 있을 수 있으니 도착 즉시 명부 작성 권장.", "query": "하카타 모츠나베 마에다야 이마이즈미점"}, {"time": "21:30 ~ 23:00", "category": "🏮 낭만 2차 / 야타이 & 바", "title": "야타이 카라스 텐구 or 사카쇼 스가와라 or 호텔 라운지", "lat": 33.5885, "lng": 130.402, "is_saved": true, "saved_type": "저장 밥집 #2 / #10", "rating": "4.9", "desc": "텐진 강변 포장마차 '야타이 카라스 텐구'(#2, ★4.9)에서 명란구이와 수제 야키토리, 어묵탕에 생맥주 한잔! 또는 프리미엄 사케 전문 바 '사카쇼 스가와라'(#10, ★4.7)나 호텔 1층 감성 바에서 한잔.", "tip": "💡 야타이(포장마차)는 현금(엔화) 결제 필수입니다. 밤바람 쐬며 숙소까지 도보로 산책 귀가.", "query": "야타이 카라스 텐구"}]}, {"day": 2, "date": "11월 17일 (화)", "theme": "텐진/다이묘 점심 ➜ 세이류 온천 (13:50 예약 힐링) ➜ 극상 와규 야키니쿠 ➜ 사시스 스시", "summary": "숙소 주변 다이묘 골목 산책 후 육즙 가득 규카츠로 점심을 즐기고, 13:50 예약된 '나카가와 세이류 온천'으로 이동해 자연 속 노천 온천욕 힐링! 저녁엔 후쿠오카 최고급 와규 야키니쿠와 스시로 완벽한 미식의 날", "color": "#10B981", "timeline": [{"time": "09:30 ~ 11:15", "category": "☕ 오전 산책 / 쇼핑", "title": "The Knot 주변 다이묘 골목 감성 산책 & 텐진 지하상가", "lat": 33.5866, "lng": 130.3942, "is_saved": false, "saved_type": null, "rating": null, "desc": "숙소 바로 앞 다이묘 골목은 후쿠오카 트렌드의 중심! 아기자기한 빈티지 편집샵, 스트리트 패션 매장, 감성 카페를 둘러보거나 텐진 지하상가 가벼운 쇼핑.", "tip": "💡 오전 다이묘 골목은 붐비지 않고 여유로워 사진 찍기 좋습니다.", "query": "다이묘 거리 후쿠오카"}, {"time": "11:30 ~ 12:20", "category": "🥩 점심 만찬 / 규카츠·장어", "title": "규카츠 모토무라 파르코점 or 우나토토 or 이나다야 선", "lat": 33.5898, "lng": 130.3988, "is_saved": true, "saved_type": "저장 밥집 #1 / #7 / #9", "rating": "4.9", "desc": "개인 미니 화로에 구워 먹는 겉바속촉 끝판왕 '규카츠 모토무라 파르코점'(#1, ★4.9) 또는 숯불 향 가득한 가성비 장어덮밥 '우나토토 다이묘점'(#7, 도보 3분)에서 든든한 점심.", "tip": "💡 규카츠 모토무라는 11:00 오픈 시점에 방문하면 대기 시간을 크게 줄일 수 있습니다.", "query": "규카츠 모토무라 후쿠오카 파르코점"}, {"time": "12:25 ~ 13:25", "category": "🚌 이동 / 셔틀 환승", "title": "텐진역(니시테츠) ➜ 오하시역 ➜ 세이류 온천 무료 셔틀버스(12:45)", "lat": 33.5583, "lng": 130.4358, "is_saved": false, "saved_type": "교통 꿀팁", "rating": null, "desc": "텐진역에서 니시테츠 전철 탑승 ➜ 오하시역(大橋駅) 하차 (급행 4분 / 보통 6분). 오하시역 동쪽 출구 로터리에서 12:45 출발 '세이류 온천 무료 셔틀버스' 탑승 ➜ 온천까지 약 35분 소요.", "tip": "💡 셔틀버스는 25인승 선착순 탑승이므로 12:35분경 미리 오하시역 동구 정류장에 줄을 서시는 것을 추천합니다.", "query": "오하시역 후쿠오카"}, {"time": "13:25 ~ 16:30", "category": "♨️ 천연 온천 / 힐링", "title": "나카가와 세이류 온천 (那珂川清滝) [13:50 온천 예약]", "lat": 33.4727, "lng": 130.4141, "is_saved": true, "saved_type": "⭐ 필수 코스", "rating": "4.4", "desc": "13:50 예약 타임 입장! 후쿠오카 남부 자연림과 계곡에 둘러싸인 천연 온천. 숲속 노천탕, 히노끼탕, 폭포탕, 가족탕에서 단풍을 바라보며 온천욕 후 다다미 휴식실에서 시원한 커피우유 한 잔.", "tip": "💡 수건은 유료이므로 호텔 객실 수건을 챙겨가시면 좋습니다. 온천 후 16:30(또는 17:00) 셔틀버스로 오하시역 복귀.", "query": "那珂川清滝"}, {"time": "17:30 ~ 18:15", "category": "🏨 숙소 복귀 / 정돈", "title": "오하시역 ➜ 텐진 복귀 ➜ The Knot Hotel 휴식 및 저녁 준비", "lat": 33.5866, "lng": 130.3942, "is_saved": true, "saved_type": "숙소", "rating": "4.6", "desc": "세이류 셔틀 ➜ 오하시역 ➜ 니시테츠 전철로 텐진 복귀 후 숙소(The Knot)에서 온천 후 상쾌한 옷차림으로 환복 및 재정비.", "tip": "💡 온천 후 혈액순환이 좋아져 야키니쿠와 생맥주 맛이 2배로 좋습니다.", "query": "THE KNOT FUKUOKA"}, {"time": "18:30 ~ 20:30", "category": "🥩 저녁 만찬 / 최고급 와규", "title": "개실 야키니쿠 니쿠덴 or 바쿠로 다이묘점 or 주베", "lat": 33.5875, "lng": 130.396, "is_saved": true, "saved_type": "저장 밥집 #4 / #14 / #3", "rating": "4.8", "desc": "프라이빗 룸에서 즐기는 최고급 와규 구이 '개실 야키니쿠 니쿠덴'(#4, ★4.8) 또는 숙소 도보 3분 목장 직송 흑우 와규 '바쿠로 다이묘점'(#14, ★4.4)에서 혀에서 살살 녹는 우설, 살치살, 갈비 파티!", "tip": "💡 우설(규탄) 소금구이와 특선 갈비살, 메가 생맥주 조합 강력 추천.", "query": "개실 야키니쿠 니쿠덴"}, {"time": "21:00 ~ 23:00", "category": "🍣 야식 / 가성비 스시주점", "title": "스시사카바 사시스 텐진점 or 쇼쿠도 오완", "lat": 33.5895, "lng": 130.4005, "is_saved": true, "saved_type": "저장 밥집 #24 / #11", "rating": "4.1", "desc": "참치 마끼가 삐져나오는 비주얼 쇼크 '스시사카바 사시스 텐진점'(#24, ★4.1)에서 새우육회와 참치김밥, 하이볼 한잔! 또는 다이묘 감성 주점 '쇼쿠도 오완'(#11)에서 2차.", "tip": "💡 사시스 텐진점은 가성비가 훌륭하며 밤 시간대 웨이팅이 비교적 적습니다.", "query": "스시사카바 사시스 텐진점"}]}, {"day": 3, "date": "11월 18일 (수)", "theme": "히타 & 유후인 와쿠와쿠 4호선 일일 투어 (08:30 미팅) ➜ 긴린코 호수 ➜ 저녁 와규/주점", "summary": "08:30 하카타역에서 한국인 가이드 전용 버스로 출발! '큐슈의 작은 교토' 히타 마메다마치 옛 거리와 야키소바, 가을 단풍과 물안개가 피어오르는 유후인 긴린코 호수까지 하루 만에 완전 정복하는 힐링 투어의 날", "color": "#3B82F6", "timeline": [{"time": "08:00 ~ 08:25", "category": "🚇 지하철 이동 / 집합", "title": "The Knot 숙소 출발 ➜ 하카타역 치쿠시구치 이동 (지하철 6분)", "lat": 33.5902, "lng": 130.4207, "is_saved": false, "saved_type": null, "rating": null, "desc": "텐진역(또는 아카사카역)에서 지하철 공항선 탑승 ➜ 하카타역 하차 (3정거장, 6분 소요). 치쿠시구치(동쪽 출구) 방면으로 이동.", "tip": "💡 08:30까지 미팅 장소에 도착해야 하므로 08:00에 호텔에서 여유 있게 출발하세요.", "query": "하카타역 치쿠시구치"}, {"time": "08:30 ~ 08:40", "category": "🚌 투어 미팅 / 탑승", "title": "와쿠와쿠 4호선 가이드 미팅 (하카타역 로손 오리엔탈호텔점 앞)", "lat": 33.5902, "lng": 130.4207, "is_saved": true, "saved_type": "⭐ 투어 출발지", "rating": "4.9", "desc": "하카타역 치쿠시구치 '로손 오리엔탈호텔 후쿠오카점' 앞에서 와쿠와쿠 4호선 전담 한국인 가이드 미팅 및 출석 체크. 대형 래핑 버스 탑승 (전좌석 스마트폰 충전 USB 포트 완비).", "tip": "💡 버스 안에서 꿀잠 자며 체력 충전 가능! 가이드님이 전용 히타/유후인 맛집 지도를 배부합니다.", "query": "로손 오리엔탈호텔 후쿠오카"}, {"time": "10:30 ~ 12:40", "category": "🏮 근교 소도시 / 히타", "title": "히타 마메다마치 (約 130분 체류) & 명물 히타 야키소바 점심", "lat": 33.3215, "lng": 130.9405, "is_saved": true, "saved_type": "⭐ 와쿠와쿠 코스 1", "rating": "4.6", "desc": "'큐슈의 작은 교토' 히타 마메다마치 에도 시대 전통 가옥 보존 지구 산책. 200년 전통 간장/된장 양조장, 군게타(삼나무 나막신) 공방, 진격의 거인 작가 고향 기념관. 점심은 바삭한 면발이 매력적인 히타 원조 야키소바(소후렌 등) 맛보기.", "tip": "💡 히타 양조장에서 달콤짭조름한 고급 간장과 유자코쇼(유자고추) 기념품 구매 추천.", "query": "히타 마메다마치"}, {"time": "13:40 ~ 16:30", "category": "🍁 단풍 명소 / 유후인", "title": "유후인 & 긴린코 호수 (約 170분 체류) 단풍 산책 & 먹거리 투어", "lat": 33.2655, "lng": 131.3555, "is_saved": true, "saved_type": "⭐ 와쿠와쿠 코스 2", "rating": "4.8", "desc": "가을 단풍이 절정인 유후인 자유시간! 호수 바닥에서 온천수와 청수가 동시에 솟아 물안개가 피어오르는 '긴린코 호수' 절경 감상. 유노츠보 거리에서 금상 고로케, B-speak 롤케이크, 미르히 치즈케이크 길거리 간식 즐기기.", "tip": "💡 긴린코 호수 카페 '샤갈' 테라스에서 호수 뷰를 바라보며 커피 한잔의 여유를 즐겨보세요.", "query": "긴린코 호수"}, {"time": "16:30 ~ 18:45", "category": "🚌 복귀 / 하카타 도착", "title": "유후인 출발 ➜ 고속도로 ➜ 하카타역 복귀 하차 (라라포트 경유)", "lat": 33.5902, "lng": 130.4207, "is_saved": false, "saved_type": null, "rating": null, "desc": "가이드의 재미있는 큐슈 역사·쇼핑 꿀팁 설명과 함께 편안하게 후쿠오카로 복귀. 18:30~19:00 하카타역 하차.", "tip": "💡 라라포트 실물 건담을 보고 싶으신 분은 라라포트 중도 하차도 가능합니다.", "query": "하카타역"}, {"time": "19:15 ~ 21:00", "category": "🥩 저녁 만찬 / 든든한 고기", "title": "니쿠토사케 주베 or 야키니쿠 규센닌 or 저스트 미트", "lat": 33.5895, "lng": 130.42, "is_saved": true, "saved_type": "저장 밥집 #3 / #6 / #8", "rating": "4.8", "desc": "투어 종료 후 하카타역 앞 와규 맛집 '니쿠토사케 주베'(#3, ★4.8) 또는 '야키니쿠 규센닌'(#6, ★4.4)에서 온천·투어로 다진 체력에 육즙 가득 고기 충전! 또는 다이묘 숙소 근처로 돌아와 '저스트 미트'(#8, ★4.6) 방문.", "tip": "💡 주베의 야키니쿠 코스와 사케 페어링은 여행 3일차 만찬으로 완벽합니다.", "query": "니쿠토사케 주베"}, {"time": "21:30 ~ 23:00", "category": "🍸 숙소 복귀 / 칵테일", "title": "The Knot Hotel 라운지 바 or 다이묘 감성 이자카야", "lat": 33.5866, "lng": 130.3942, "is_saved": true, "saved_type": "숙소", "rating": "4.6", "desc": "다이묘 숙소(The Knot)로 복귀. 세련된 호텔 1층 라운지 바에서 시그니처 칵테일 한잔을 마시며 마지막 밤의 아쉬움을 달래는 여유.", "tip": "💡 내일 귀국 짐 정리를 미리 해두시면 아침이 훨씬 여유롭습니다.", "query": "THE KNOT FUKUOKA"}]}, {"day": 4, "date": "11월 19일 (목)", "theme": "체크아웃 ➜ 오호리 공원 단풍 산책 / 면세 쇼핑 ➜ 이나다야 선 부타동 ➜ 14:00 공항 이동 ➜ 17:50 귀국", "summary": "17:50 한국 도착 일정에 맞춰 14:00경 공항 도착 필요! The Knot 체크아웃 후 짐을 맡기고, 오호리 공원의 호수 단풍 산책이나 텐진 면세 쇼핑 후 저장 맛집에서 마지막 점심 만찬을 즐긴 뒤 지하철 11분 만에 공항으로 직행하는 완벽한 마무리", "flight_info": "✈️ 귀국 항공편: 후쿠오카 약 16:15 출발 ➜ 17:50 한국 도착 예정 (14:15까지 공항 도착 권장)", "color": "#F59E0B", "timeline": [{"time": "09:30 ~ 10:00", "category": "🏨 체크아웃 / 짐 보관", "title": "The Knot Fukuoka 체크아웃 & 프런트에 캐리어 보관", "lat": 33.5866, "lng": 130.3942, "is_saved": true, "saved_type": "숙소", "rating": "4.6", "desc": "호텔 프런트에 짐을 무료로 맡기고 홀가분한 몸으로 마지막 날 일정 시작. 텐진역/공항선 지하철이 코앞이라 나중에 짐 찾고 공항 가기가 매우 편리합니다.", "tip": "💡 체크아웃 시 짐 보관 번호표를 사진으로 찍어두세요.", "query": "THE KNOT FUKUOKA"}, {"time": "10:00 ~ 11:20", "category": "🍁 오전 산책 / 단풍 & 쇼핑", "title": "오호리 공원 & 성터 단풍 산책 or 텐진 돈키호테 면세 쇼핑", "lat": 33.586, "lng": 130.3765, "is_saved": true, "saved_type": "저장 관광지 #33 / #34", "rating": "4.5", "desc": "숙소에서 서쪽으로 도보 12분(또는 지하철 1정거장)! 노란 은행나무와 붉은 단풍이 호수를 둘러싼 '오호리 공원 & 후쿠오카 성터' 힐링 산책. 또는 숙소 도보 5분 '돈키호테 텐진본점' 및 이와타야 백화점에서 화장품·과자·명품 면세 쇼핑.", "tip": "💡 오호리 공원 호수 뷰 스타벅스 테라스는 오전 햇살과 단풍 사진 명당입니다.", "query": "오호리 공원"}, {"time": "11:30 ~ 12:40", "category": "🍲 마지막 만찬 / 부타동·츠케멘", "title": "부타 매니아동 이나다야 선 or 멘야 카네토라 or 신신 본점", "lat": 33.59, "lng": 130.399, "is_saved": true, "saved_type": "저장 밥집 #9 / #13 / #19", "rating": "4.6", "desc": "숯불 직화로 구워 특제 타래 소스를 얹은 인생 돼지고기 덮밥 '부타 매니아동 이나다야 선'(#9, ★4.6) 또는 감칠맛 폭발 매콤濃厚 츠케멘 '멘야 카네토라'(#13, ★4.4)나 텐진 본점 돈코츠 라멘 '신신 라멘'(#19, ★4.2)에서 잊지 못할 마지막 식사.", "tip": "💡 11:30 오픈 직후 입장하시면 대기 없이 여유롭게 식사할 수 있습니다.", "query": "부타 매니아동 이나다야 선"}, {"time": "13:30 ~ 14:15", "category": "🚅 공항 직행 / 11분 소요", "title": "The Knot 짐 수령 ➜ 텐진역 지하철 공항선 ➜ 후쿠오카 공항 도착", "lat": 33.5859, "lng": 130.4507, "is_saved": false, "saved_type": "공항 직통", "rating": null, "desc": "호텔에서 보관한 캐리어 수령 ➜ 텐진역(또는 아카사카역)에서 지하철 공항선 탑승. 환승 없이 단 11분 만에 후쿠오카 공항 국내선역 도착! 국제선 셔틀버스(10분) 환승 ➜ 14:10경 국제선 터미널 도착.", "tip": "💡 비행기 출발(16:15경) 2시간 전인 14:15까지 공항에 도착하면 출국 심사와 면세점 쇼핑이 매우 여유롭습니다.", "query": "후쿠오카 공항 국제선 터미널"}, {"time": "14:15 ~ 17:50", "category": "✈️ 귀국 / 면세 쇼핑", "title": "공항 면세점 쇼핑 ➜ 16:15 탑승 ➜ 17:50 한국 도착", "lat": 33.5859, "lng": 130.4507, "is_saved": false, "saved_type": "귀국", "rating": null, "desc": "후쿠오카 공항 면세점에서 명란젓, 히요코 만쥬, 나가사키 후쿠사야 카스텔라, 닷사이 23 사케, 로이스 초콜릿 구매. 16:15경 이륙 ➜ 17:50 한국 무사 도착!", "tip": "💡 닷사이 23 준마이다이긴죠는 시내보다 공항 면세점이 가장 저렴합니다.", "query": "후쿠오카 공항 면세점"}]}];
@@ -1104,25 +544,10 @@
   const checklistData = [{"title": "여권 (유효기간 6개월 이상)", "desc": "만료일 반드시 사전 확인"}, {"title": "비짓재팬웹(Visit Japan Web) 등록 및 QR 캡처", "desc": "입국심사 및 세관신고 QR코드를 스마트폰 갤러리에 오프라인 캡처본으로 저장"}, {"title": "11/17 13:50 세이류 온천 예약 바우처 & 객실 수건", "desc": "세이류 온천 13:50 예약 확인서 캡처. 수건 유료이므로 호텔 수건 지참 권장"}, {"title": "11/18 08:30 와쿠와쿠 4호선 투어 바우처 & 보조배터리", "desc": "하카타역 치쿠시구치 로손 오리엔탈호텔점 앞 08:30 집합. 이동 중 스마트폰 충전 케이블 준비"}, {"title": "The Knot Fukuoka 호텔 예약 바우처", "desc": "주소: 福岡県福岡市中央区大名1-9-63 (체크인 시 여권과 제시)"}, {"title": "일본 eSIM / 유심 또는 포켓와이파이", "desc": "한국에서 미리 세팅 또는 비행기 착륙 직후 개통"}, {"title": "트래블로그 / 트래블월렛 카드", "desc": "후쿠오카 지하철 및 편의점, 매장 터치 결제용"}, {"title": "현금 (엔화 지폐 & 동전)", "desc": "나카스 야타이(포차), 세이류 온천 자판기, 신사 부적 등은 현금 필수 (1인당 1.5~2만엔 권장)"}, {"title": "110V 돼지코 어댑터 (1~2개)", "desc": "일본 호텔 콘센트 충전용 필수"}, {"title": "11월 중순 후쿠오카 가을 옷차림", "desc": "낮 최고 18~20℃ (포근), 아침·저녁 9~12℃ (쌀쌀). 얇은 니트/셔츠 + 경량패딩이나 자켓 레이어드"}, {"title": "편안한 운동화", "desc": "다이묘 거리, 히타 전통 거리, 유후인 호수 산책으로 하루 1만~1.5만보 걷기 대비"}];
 
   let map;
-  let allMarkerLayers = [];
-  let routeLayers = [];
-  let simMarker = null;
-  let simInterval = null;
-  let mapDisplayMode = 'all';
-
-  const catColors = {
-    '야키니쿠': '#DC2626',
-    '고기': '#EF4444',
-    '라멘': '#EA580C',
-    '스시/해산물': '#0284C7',
-    '모츠나베': '#7C3AED',
-    '장어': '#D97706',
-    '튀김/우동': '#059669',
-    '주점': '#6366F1',
-    '디저트': '#EC4899',
-    '관광지': '#1B365D',
-    '숙소': '#6D28D9'
-  };
+  let markers = {};
+  let activeNo = null;
+  let isMapOpen = true;
+  let currentDay = 'all';
 
   function initMap() {
     map = L.map('leafletMap', {
@@ -1132,707 +557,310 @@
       tap: false
     });
 
-    // Genuine Google Maps Tiles (Korean language, NO API key required!)
-    const gmapRoad = L.tileLayer('https://mt1.google.com/vt/lyrs=m&hl=ko&gl=KR&x={x}&y={y}&z={z}', {
+    L.tileLayer('https://mt1.google.com/vt/lyrs=m&hl=ko&gl=KR&x={x}&y={y}&z={z}', {
       attribution: '&copy; Google Maps',
-      maxZoom: 20
-    });
-
-    const gmapSat = L.tileLayer('https://mt1.google.com/vt/lyrs=y&hl=ko&gl=KR&x={x}&y={y}&z={z}', {
-      attribution: '&copy; Google Satellite',
-      maxZoom: 20
-    });
-
-    const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap',
       maxZoom: 19
-    });
-
-    gmapRoad.addTo(map);
-
-    L.control.layers({
-      '🗺️ Google 지도 (일반)': gmapRoad,
-      '🛰️ Google 위성 (하이브리드)': gmapSat,
-      '🌍 OpenStreetMap': osmStandard
-    }, null, { position: 'topright' }).addTo(map);
-
-    map.on('popupclose', function() {
-      setTimeout(() => {
-        if (!map._popup || !map.hasLayer(map._popup)) {
-          deactivateAllPins();
-        }
-      }, 60);
-    });
-    map.on('click', function(e) {
-      if (!e.originalEvent || !e.originalEvent._pinClicked) {
-        deactivateAllPins();
-      }
-    });
-
-    renderMapMarkers();
-  }
-
-  let pinNumberMode = 'interactive'; // 'interactive' or 'always'
-  let activePlaceNo = null;
-  let placeMarkers = {};
-
-  function setPinNumberMode(mode) {
-    pinNumberMode = mode;
-    document.getElementById('btnPinInteractive').classList.toggle('active', mode === 'interactive');
-    document.getElementById('btnPinAlways').classList.toggle('active', mode === 'always');
-    
-    const msgEl = document.getElementById('pinHelperMsg');
-    if (msgEl) {
-      msgEl.innerHTML = mode === 'interactive'
-        ? '💡 지도의 점이나 아래 일정을 탭하면 번호와 정보가 튀어나옵니다'
-        : '📌 38개 모든 장소의 번호가 지도 위에 상시 표시 중입니다';
-    }
+    }).addTo(map);
 
     allPlaces.forEach(p => {
-      const marker = placeMarkers[p.no];
-      if (marker) {
-        const isAct = (activePlaceNo === p.no);
-        marker.setIcon(createPinIcon(p, mode === 'always', isAct));
-      }
-    });
-  }
+      const icon = L.divIcon({
+        className: 'interactive-marker-wrapper',
+        html: `<div class="pin-anchor" id="pin-${p.no}"><div class="pin-dot"></div></div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -14]
+      });
 
-  function createPinIcon(p, isAlways, isActive) {
-    const col = catColors[p.cat] || '#475569';
-    const isTour = p.cat === '관광지';
-    const isHotel = p.cat === '숙소' || p.no === 36;
-    const modeClass = isAlways ? 'pin-always-number' : 'pin-interactive';
-    const actClass = isActive ? 'pin-active' : '';
-    let specialClass = isTour ? 'is-tour' : '';
-    if (isHotel) specialClass = 'is-hotel';
-
-    return L.divIcon({
-      className: 'interactive-marker-wrapper',
-      html: `
-        <div class="pin-anchor" id="pin-anchor-${p.no}">
-          <div class="pin-bubble ${modeClass} ${actClass} ${specialClass}" style="--category-color: ${col};" data-no="${p.no}">
-            <span class="pin-number">${p.no}</span>
-          </div>
-          <div class="pin-floating-tag">${p.no}. ${p.name}</div>
-        </div>
-      `,
-      iconSize: [36, 36],
-      iconAnchor: [18, 18],
-      popupAnchor: [0, -18]
-    });
-  }
-
-  function activatePinByNo(no, shouldFly = true) {
-    if (activePlaceNo && activePlaceNo !== no && placeMarkers[activePlaceNo]) {
-      const prevMarker = placeMarkers[activePlaceNo];
-      const prevPlace = allPlaces.find(x => x.no === activePlaceNo);
-      if (prevPlace) {
-        prevMarker.setIcon(createPinIcon(prevPlace, pinNumberMode === 'always', false));
-      }
-    }
-
-    activePlaceNo = no;
-    const marker = placeMarkers[no];
-    const p = allPlaces.find(x => x.no === no);
-    if (!marker || !p) return;
-
-    marker.setIcon(createPinIcon(p, pinNumberMode === 'always', true));
-
-    if (shouldFly) {
-      map.flyTo([p.lat, p.lng], 15.5, { duration: 0.6 });
-    }
-
-    setTimeout(() => {
-      marker.openPopup();
-    }, 80);
-
-    highlightCardsForPlace(p.no, p.name);
-  }
-
-  function deactivateAllPins() {
-    if (activePlaceNo && placeMarkers[activePlaceNo]) {
-      const prevMarker = placeMarkers[activePlaceNo];
-      const prevPlace = allPlaces.find(x => x.no === activePlaceNo);
-      if (prevPlace) {
-        prevMarker.setIcon(createPinIcon(prevPlace, pinNumberMode === 'always', false));
-      }
-    }
-    activePlaceNo = null;
-    document.querySelectorAll('.timeline-card, .place-card').forEach(c => c.classList.remove('card-pin-highlight'));
-  }
-
-  function highlightCardsForPlace(no, name) {
-    document.querySelectorAll('.timeline-card, .place-card').forEach(c => c.classList.remove('card-pin-highlight'));
-
-    const timelineCards = Array.from(document.querySelectorAll('.timeline-card'));
-    const targetTimelineCard = timelineCards.find(c => {
-      const titleEl = c.querySelector('.card-title');
-      return titleEl && (titleEl.textContent.includes(name) || name.includes(titleEl.textContent.trim().split(' ')[0]));
-    });
-
-    if (targetTimelineCard) {
-      targetTimelineCard.classList.add('card-pin-highlight');
-      targetTimelineCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    const foodCards = Array.from(document.querySelectorAll('.place-card'));
-    const targetFoodCard = foodCards.find(c => {
-      const nameEl = c.querySelector('.place-name');
-      return nameEl && nameEl.textContent.includes(name);
-    });
-    if (targetFoodCard) {
-      targetFoodCard.classList.add('card-pin-highlight');
-    }
-  }
-
-  // Mobile View Switcher (Split vs List only vs Map only)
-  function setMobileView(mode) {
-    document.body.classList.remove('mobile-mode-list', 'mobile-mode-map');
-    document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
-    
-    if (mode === 'list') {
-      document.body.classList.add('mobile-mode-list');
-      document.getElementById('btnViewList').classList.add('active');
-    } else if (mode === 'map') {
-      document.body.classList.add('mobile-mode-map');
-      document.getElementById('btnViewMap').classList.add('active');
-      if (map) {
-        setTimeout(() => { map.invalidateSize(); fitDowntown(); }, 200);
-      }
-    } else {
-      document.getElementById('btnViewSplit').classList.add('active');
-      if (map) {
-        setTimeout(() => { map.invalidateSize(); fitDowntown(); }, 200);
-      }
-    }
-  }
-
-  let isMapExpanded = false;
-  function toggleMapExpand() {
-    const mapEl = document.getElementById('leafletMap');
-    isMapExpanded = !isMapExpanded;
-    mapEl.classList.toggle('expanded', isMapExpanded);
-    document.getElementById('mapExpandBtn').textContent = isMapExpanded ? '⤡ 지도 축소' : '⤢ 지도 크기 조절';
-    if (map) {
-      setTimeout(() => { map.invalidateSize(); }, 300);
-    }
-  }
-
-  function setMapDisplayMode(mode) {
-    mapDisplayMode = mode;
-    document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
-    if (mode === 'all') document.getElementById('chipModeAll').classList.add('active');
-    else if (mode === 'route') document.getElementById('chipModeRoute').classList.add('active');
-    else if (mode === '야키니쿠') document.getElementById('chipModeYakiniku').classList.add('active');
-    else if (mode === '라멘') document.getElementById('chipModeRamen').classList.add('active');
-    else if (mode === '스시/해산물') document.getElementById('chipModeSushi').classList.add('active');
-
-    renderMapMarkers();
-  }
-
-  function renderMapMarkers() {
-    clearMapLayers();
-    placeMarkers = {};
-
-    // 1. Plot Places Markers
-    allPlaces.forEach(p => {
-      if (mapDisplayMode === 'route') return;
-      if (mapDisplayMode !== 'all' && p.cat !== mapDisplayMode && (mapDisplayMode !== '야키니쿠' || (p.cat !== '야키니쿠' && p.cat !== '고기'))) return;
-
-      const col = catColors[p.cat] || '#475569';
-      const isAct = (activePlaceNo === p.no);
-      const icon = createPinIcon(p, pinNumberMode === 'always', isAct);
-
-      const marker = L.marker([p.lat, p.lng], { icon: icon }).addTo(map);
-
-      marker.bindPopup(`
-        <div style="font-family:inherit; min-width:205px; padding:2px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-            <span style="font-size:11px; font-weight:800; color:${col}; background:${col}15; padding:2px 6px; border-radius:4px;">#${p.no} · ${p.cat}</span>
-            <span style="font-size:11px; font-weight:800; color:#B91C1C; background:#FEE2E2; padding:1px 6px; border-radius:4px;">★ ${p.rating}</span>
-          </div>
-          <div style="font-size:14px; font-weight:800; color:#0F172A; margin-bottom:4px; line-height:1.3;">${p.name}</div>
-          <div style="font-size:12px; color:#475569; margin-bottom:8px; line-height:1.4;">${p.desc}</div>
-          <div style="border-top:1px solid #E2E8F0; padding-top:7px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:11px; font-weight:700; color:#1B365D; background:#F1F5F9; padding:2px 6px; border-radius:4px;">${p.day}</span>
-            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' 후쿠오카')}" target="_blank" style="color:#1D4ED8; font-weight:800; font-size:11px; text-decoration:none; display:inline-flex; align-items:center; gap:2px;">
-              구글 지도 길찾기 &rarr;
+      const m = L.marker([p.lat, p.lng], { icon }).addTo(map);
+      m.bindPopup(`
+        <div style="font-family:inherit; min-width:180px;">
+          <div style="font-size:11px; color:#6B7280; font-weight:700;">#${p.no} · ${p.cat}</div>
+          <div style="font-size:14px; font-weight:800; color:#111827; margin:2px 0;">${p.name}</div>
+          <div style="font-size:11px; color:#4B5563; margin-bottom:6px;">${p.desc}</div>
+          <div style="border-top:1px solid #E5E7EB; padding-top:4px; font-size:11px;">
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' 후쿠오카')}" target="_blank" style="color:#2563EB; font-weight:700; text-decoration:none;">
+              구글 지도 열기 &rarr;
             </a>
           </div>
         </div>
-      `, {
-        offset: [0, -14],
-        closeButton: true
+      `);
+
+      m.on('click', () => {
+        focusPlace(p.no, false);
       });
 
-      marker.on('click', function(e) {
-        if (e.originalEvent) e.originalEvent._pinClicked = true;
-        L.DomEvent.stopPropagation(e);
-        activatePinByNo(p.no, true);
-      });
-
-      placeMarkers[p.no] = marker;
-      allMarkerLayers.push(marker);
+      markers[p.no] = m;
     });
 
-    // 2. Draw Routes
-    daysData.forEach(day => {
-      if (currentDayFilter !== 'all' && day.day !== currentDayFilter) return;
+    map.on('popupclose', () => {
+      resetPinHighlight();
+    });
+  }
 
-      const latlngs = [];
-      day.timeline.forEach((item, idx) => {
-        if (!item.lat || !item.lng) return;
-        latlngs.push([item.lat, item.lng]);
+  function toggleMap() {
+    const box = document.getElementById('mapBox');
+    const btn = document.getElementById('mapToggleBtn');
+    isMapOpen = !isMapOpen;
+    box.classList.toggle('collapsed', !isMapOpen);
+    btn.innerHTML = isMapOpen ? '🗺️ 지도 접기' : '🗺️ 지도 펴기';
+    if (isMapOpen && map) {
+      setTimeout(() => map.invalidateSize(), 150);
+    }
+  }
 
-        if (mapDisplayMode === 'route') {
-          const icon = L.divIcon({
-            html: `<div class="custom-marker" style="background:${day.color}; width:24px; height:24px;">${idx + 1}</div>`,
-            className: '',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
-          });
-          const m = L.marker([item.lat, item.lng], { icon: icon }).addTo(map);
-          m.bindPopup(`<b>Day ${day.day}: ${item.title}</b><br>${item.desc}`);
-          allMarkerLayers.push(m);
-        }
-      });
-
-      if (latlngs.length > 1) {
-        const polyline = L.polyline(latlngs, {
-          color: day.color,
-          weight: 4.5,
-          opacity: 0.85,
-          dashArray: '6, 6'
-        }).addTo(map);
-        routeLayers.push(polyline);
-      }
+  function selectDay(day) {
+    currentDay = day;
+    document.querySelectorAll('.day-tab-btn').forEach((b, idx) => {
+      b.classList.toggle('active', (day === 'all' && idx === 0) || (day === idx));
     });
 
-    fitDowntown();
-  }
-
-  function clearMapLayers() {
-    allMarkerLayers.forEach(m => map.removeLayer(m));
-    routeLayers.forEach(l => map.removeLayer(l));
-    allMarkerLayers = [];
-    routeLayers = [];
-    if (simMarker) {
-      map.removeLayer(simMarker);
-      simMarker = null;
-    }
-    if (simInterval) {
-      clearTimeout(simInterval);
-      simInterval = null;
-    }
-  }
-
-  function fitDowntown() {
-    // Center around Daimyo & The Knot Fukuoka
-    map.flyTo([33.5866, 130.3942], 14, { duration: 1.0 });
-  }
-
-  // Interactive Pan / FlyTo on click
-  function panToLocation(lat, lng, title) {
-    if (!lat || !lng) return;
-
-    let closest = null;
-    let minDist = 999999;
-    allPlaces.forEach(p => {
-      const d = Math.hypot(p.lat - lat, p.lng - lng);
-      if (d < minDist) {
-        minDist = d;
-        closest = p;
-      }
-    });
-
-    if (closest && minDist < 0.0035) {
-      activatePinByNo(closest.no, true);
-    } else {
-      map.flyTo([lat, lng], 15.5, { duration: 0.6 });
-    }
-
-    // On mobile, if in split view, scroll map into view if scrolled far down
-    if (window.innerWidth <= 1024 && !document.body.classList.contains('mobile-mode-map')) {
-      const mapBox = document.querySelector('.map-col');
-      if (mapBox) {
-        mapBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }
-  }
-
-  // Animated Route Simulation
-  let isSimulating = false;
-  function toggleRouteSimulation() {
-    const btn = document.getElementById('playSimBtn');
-    if (isSimulating) {
-      stopSimulation();
-      btn.textContent = '▶ 동선 재생';
-      btn.style.background = '#D9381E';
-    } else {
-      startSimulation();
-      btn.textContent = '⏹ 정지';
-      btn.style.background = '#0F172A';
-    }
-  }
-
-  function stopSimulation() {
-    isSimulating = false;
-    if (simInterval) clearInterval(simInterval);
-    if (simMarker) map.removeLayer(simMarker);
-    simMarker = null;
-  }
-
-  function startSimulation() {
-    isSimulating = true;
-    const targetDays = currentDayFilter === 'all' 
-      ? daysData 
-      : daysData.filter(d => d.day === currentDayFilter);
-
-    const waypoints = [];
-    targetDays.forEach(d => {
-      d.timeline.forEach(item => {
-        if (item.lat && item.lng) {
-          waypoints.push({ ...item, dayColor: d.color, dayNum: d.day });
-        }
-      });
-    });
-
-    if (waypoints.length < 2) return;
-
-    let currentIndex = 0;
-    const startPt = waypoints[0];
-
-    const simIcon = L.divIcon({
-      html: '<div class="custom-marker sim-moving-marker" style="width:28px; height:28px; font-size:14px;">🚶</div>',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
-
-    if (simMarker) map.removeLayer(simMarker);
-    simMarker = L.marker([startPt.lat, startPt.lng], { icon: simIcon, zIndexOffset: 1000 }).addTo(map);
-
-    function nextStep() {
-      if (!isSimulating) return;
-      if (currentIndex >= waypoints.length) {
-        stopSimulation();
-        document.getElementById('playSimBtn').textContent = '▶ 다시 재생';
-        document.getElementById('playSimBtn').style.background = '#D9381E';
-        return;
-      }
-
-      const pt = waypoints[currentIndex];
-      map.flyTo([pt.lat, pt.lng], 14.5, { duration: 1.0 });
-      simMarker.setLatLng([pt.lat, pt.lng]);
-      simMarker.bindPopup(`
-        <div style="font-family:inherit;">
-          <span style="font-size:11px; font-weight:700; color:${pt.dayColor};">Day ${pt.dayNum} · ${pt.time}</span>
-          <div style="font-weight:800; font-size:13px;">${pt.title}</div>
-        </div>
-      `).openPopup();
-
-      document.querySelectorAll('.timeline-card').forEach(c => c.classList.remove('focused'));
-      const targetCard = document.getElementById(`card-${pt.dayNum}-${currentIndex}`);
-      if (targetCard) {
-        targetCard.classList.add('focused');
-        targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      currentIndex++;
-      simInterval = setTimeout(nextStep, 2300);
-    }
-
-    nextStep();
-  }
-
-  // Day Filter
-  let currentDayFilter = 'all';
-
-  function filterDay(day) {
-    currentDayFilter = day;
-    document.querySelectorAll('.day-pill-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.legend-chip').forEach(c => c.classList.remove('active'));
-    
-    const btns = document.querySelectorAll('.day-pill-btn');
-    if (day === 'all') btns[0].classList.add('active');
-    else btns[day].classList.add('active');
-
-    if (day !== 'all') {
-      const legends = document.querySelectorAll('.legend-chip');
-      legends[day - 1].classList.add('active');
-    }
+    const statusMap = {
+      'all': '전체 3박 4일 일정',
+      1: '1일차: 후쿠오카 도착 & 모츠나베',
+      2: '2일차: 세이류 온천 (13:50) & 와규',
+      3: '3일차: 히타 & 유후인 투어',
+      4: '4일차: 단풍 산책 & 귀국'
+    };
+    document.getElementById('dayStatusText').textContent = statusMap[day] || '일정';
 
     renderItinerary();
-    renderMapMarkers();
 
-    if (day === 2) {
-      map.flyTo([33.4727, 130.4141], 12.5, { duration: 1.2 });
-    } else if (day === 3) {
-      map.flyTo([33.30, 131.15], 10.5, { duration: 1.2 });
-    } else {
-      fitDowntown();
+    if (map) {
+      if (day === 2) map.flyTo([33.4727, 130.4141], 12.5, { duration: 0.8 });
+      else if (day === 3) map.flyTo([33.30, 131.15], 10, { duration: 0.8 });
+      else map.flyTo([33.5866, 130.3942], 13.5, { duration: 0.8 });
     }
   }
 
-  // Render Itinerary Cards
+  function focusPlace(no, fly = true) {
+    resetPinHighlight();
+    activeNo = no;
+    const p = allPlaces.find(x => x.no === no);
+    const m = markers[no];
+    if (!p || !m) return;
+
+    const dot = document.querySelector(`#pin-${no} .pin-dot`);
+    if (dot) {
+      dot.classList.add('is-active');
+      dot.textContent = no;
+    }
+
+    if (fly && map) {
+      if (!isMapOpen) toggleMap();
+      map.flyTo([p.lat, p.lng], 15, { duration: 0.5 });
+      setTimeout(() => m.openPopup(), 100);
+    }
+
+    document.querySelectorAll('.t-card').forEach(c => c.classList.remove('focused'));
+    const matchedCard = document.getElementById(`tcard-${no}`);
+    if (matchedCard) {
+      matchedCard.classList.add('focused');
+      matchedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function resetPinHighlight() {
+    if (activeNo) {
+      const dot = document.querySelector(`#pin-${activeNo} .pin-dot`);
+      if (dot) {
+        dot.classList.remove('is-active');
+        dot.textContent = '';
+      }
+      activeNo = null;
+    }
+    document.querySelectorAll('.t-card').forEach(c => c.classList.remove('focused'));
+  }
+
   function renderItinerary() {
-    const container = document.getElementById('itineraryContent');
-    let html = '';
+    const wrap = document.getElementById('itineraryCardsWrap');
+    wrap.innerHTML = '';
 
-    const filteredDays = currentDayFilter === 'all' 
-      ? daysData 
-      : daysData.filter(d => d.day === currentDayFilter);
+    const list = currentDay === 'all' ? daysData : daysData.filter(d => d.day === currentDay);
 
-    filteredDays.forEach(dayInfo => {
-      html += `
-        <div class="day-section">
-          <div class="day-header-card" style="border-left-color:${dayInfo.color};">
-            <div class="day-header-top">
-              <div class="day-badge-title">Day ${dayInfo.day} · ${dayInfo.date}</div>
-              <div style="font-size:11px; font-weight:700; color:${dayInfo.color}; background:#F8FAFC; padding:2px 7px; border-radius:10px;">
-                ${dayInfo.day === 1 ? '저녁 입성' : dayInfo.day === 4 ? '17:50 귀국' : '전일 일정'}
-              </div>
+    list.forEach(d => {
+      const block = document.createElement('div');
+      block.className = 'day-block';
+
+      let cardsHtml = '';
+      d.timeline.forEach((item, idx) => {
+        let tag = '';
+        if (item.title.includes('Knot')) tag = '<span class="t-tag hotel">확정 숙소</span>';
+        else if (item.title.includes('세이류')) tag = '<span class="t-tag onsen">13:50 온천</span>';
+        else if (item.title.includes('와쿠와쿠')) tag = '<span class="t-tag tour">일일 투어</span>';
+        else if (item.is_saved) tag = '<span class="t-tag food">저장 밥집</span>';
+
+        let pNo = '';
+        const matchP = allPlaces.find(p => item.title.includes(p.name.slice(0, 4)) || (item.query && p.name.includes(item.query)));
+        if (matchP) pNo = matchP.no;
+
+        cardsHtml += `
+          <div class="t-card" id="tcard-${pNo || (d.day + '-' + idx)}" onclick="handleClickCard(${item.lat || 0}, ${item.lng || 0}, '${pNo}')">
+            <div class="t-card-header">
+              <span class="t-time">${item.time}</span>
+              <span class="t-cat">${item.category.split('/')[0]}</span>
             </div>
-            ${dayInfo.flight_info ? `<div class="day-flight-box">${dayInfo.flight_info}</div>` : ''}
-            <div class="day-theme-title">${dayInfo.theme}</div>
-            <div class="day-summary-text">${dayInfo.summary}</div>
-          </div>
-
-          <div class="timeline-container">
-      `;
-
-      dayInfo.timeline.forEach((item, idx) => {
-        const isHighlight = item.is_saved;
-        let savedBadge = '';
-        if (item.title.includes('Knot')) savedBadge = `<span class="knot-pill">⭐ 확정 숙소</span>`;
-        else if (item.title.includes('세이류')) savedBadge = `<span class="seiryu-pill">♨️ 13:50 온천</span>`;
-        else if (item.title.includes('와쿠와쿠')) savedBadge = `<span class="waku-pill">🚌 와쿠와쿠 투어</span>`;
-        else if (item.is_saved) savedBadge = `<span class="saved-pill">⭐ 내 밥집</span>`;
-
-        html += `
-          <div class="timeline-item ${isHighlight ? 'highlight-item' : ''}">
-            <div class="timeline-dot" style="border-color:${dayInfo.color};"></div>
-            <div class="timeline-card" id="card-${dayInfo.day}-${idx}" onclick="panToLocation(${item.lat}, ${item.lng}, '${item.title}')">
-              <div class="card-top-bar">
-                <span class="time-badge">${item.time}</span>
-                <span class="category-badge">${item.category}</span>
-              </div>
-              <div class="card-title">
-                ${item.title}
-                ${savedBadge}
-                ${item.rating ? `<span style="font-size:11px; color:#DC2626; font-weight:800; background:#FEF2F2; padding:1px 5px; border-radius:4px;">★ ${item.rating}</span>` : ''}
-              </div>
-              <div class="card-desc">${item.desc}</div>
-              ${item.tip ? `<div class="card-tip-box">${item.tip}</div>` : ''}
-              <div class="card-footer-actions">
-                <span style="font-size:11px; color:#64748B;">📍 탭하여 지도 위치 보기</span>
-                <button class="map-pan-btn" onclick="event.stopPropagation(); panToLocation(${item.lat}, ${item.lng}, '${item.title}')">
-                  지도 포커스
-                </button>
-              </div>
+            <div class="t-title">
+              ${item.title}
+              ${tag}
+            </div>
+            <div class="t-desc">${item.desc}</div>
+            ${item.tip ? `<div class="t-tip">💡 ${item.tip.replace('💡', '').trim()}</div>` : ''}
+            <div class="t-action-link">
+              <span>지도 위치 보기 &rarr;</span>
             </div>
           </div>
         `;
       });
 
-      html += `
-          </div>
+      block.innerHTML = `
+        <div class="day-banner">
+          <div class="day-banner-title">Day ${d.day} · ${d.date}</div>
+          <div class="day-banner-desc">${d.summary}</div>
         </div>
+        <div class="timeline-list">${cardsHtml}</div>
       `;
-    });
 
-    container.innerHTML = html;
+      wrap.appendChild(block);
+    });
   }
 
-  // Food Tab Logic
-  let activeFoodGroup = '전체';
-  function initFoodFilters() {
-    const groups = ['전체', '고기', '야키니쿠', '라멘', '스시/해산물', '모츠나베', '장어', '튀김/우동', '주점', '디저트'];
-    const bar = document.getElementById('foodFilterBar');
-    bar.innerHTML = '';
-    groups.forEach(g => {
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn' + (g === '전체' ? ' active' : '');
-      btn.textContent = g;
-      btn.onclick = () => {
-        activeFoodGroup = g;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderFood();
-      };
-      bar.appendChild(btn);
-    });
+  function handleClickCard(lat, lng, pNo) {
+    if (pNo && markers[pNo]) {
+      focusPlace(parseInt(pNo), true);
+    } else if (lat && lng && map) {
+      if (!isMapOpen) toggleMap();
+      map.flyTo([lat, lng], 15, { duration: 0.5 });
+    }
   }
 
   function renderFood() {
-    const q = document.getElementById('foodSearch').value.toLowerCase().trim();
-    const grid = document.getElementById('foodGrid');
-    grid.innerHTML = '';
+    const wrap = document.getElementById('foodCardsWrap');
+    wrap.innerHTML = '';
+    const q = document.getElementById('foodInput').value.toLowerCase().trim();
 
-    const filtered = foodItems.filter(item => {
-      const matchGroup = activeFoodGroup === '전체' || item.group === activeFoodGroup;
-      const matchQuery = !q || item.name.toLowerCase().includes(q) || item.cat.toLowerCase().includes(q) || item.loc.toLowerCase().includes(q) || item.menu.toLowerCase().includes(q);
-      return matchGroup && matchQuery;
-    });
+    const filtered = foodItems.filter(f => !q || f.name.toLowerCase().includes(q) || f.cat.toLowerCase().includes(q) || f.menu.toLowerCase().includes(q));
 
-    filtered.forEach(item => {
+    filtered.forEach(f => {
       const card = document.createElement('div');
-      card.className = 'place-card';
+      card.className = 'p-card';
       card.innerHTML = `
         <div>
-          <div class="place-header">
-            <div class="place-name">${item.no}. ${item.name}</div>
-            <span class="rating-star">★ ${item.rating}</span>
-          </div>
-          <div class="place-cat-tag">📍 ${item.loc} · ${item.cat}</div>
-          <div class="place-desc">
-            <b>시그니처:</b> ${item.menu}<br>
-            <span style="color:#64748B; font-size:11px; margin-top:4px; display:inline-block;">💡 ${item.tip}</span>
-          </div>
+          <div class="p-name">${f.no}. ${f.name}</div>
+          <div class="p-sub">${f.loc} · ★ ${f.rating}</div>
+          <div class="p-desc">${f.menu}</div>
         </div>
-        <div class="place-footer">
-          <span class="day-match-pill">${item.day}</span>
-          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name + ' 후쿠오카')}" target="_blank" style="color:#1B365D; font-weight:700; text-decoration:none;">
+        <div class="p-footer">
+          <span style="color:#B45309; font-weight:700;">${f.cat}</span>
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.name + ' 후쿠오카')}" target="_blank" style="color:var(--blue); font-weight:700; text-decoration:none;">
             구글 지도 &rarr;
           </a>
         </div>
       `;
-      grid.appendChild(card);
+      wrap.appendChild(card);
     });
   }
 
-  // Tour Rendering
+  function filterFoodList() {
+    renderFood();
+  }
+
   function renderTour() {
-    const grid = document.getElementById('tourGrid');
-    grid.innerHTML = '';
-    tourItems.forEach(item => {
+    const wrap = document.getElementById('tourCardsWrap');
+    wrap.innerHTML = '';
+    tourItems.forEach(t => {
       const card = document.createElement('div');
-      card.className = 'place-card';
+      card.className = 'p-card';
       card.innerHTML = `
         <div>
-          <div class="place-header">
-            <div class="place-name">${item.name}</div>
-            <span class="rating-star">★ ${item.rating}</span>
-          </div>
-          <div class="place-cat-tag">📍 ${item.loc} · <span class="saved-pill">${item.badge}</span></div>
-          <div class="place-desc">
-            ${item.desc}
-            <div class="card-tip-box" style="margin-top:8px;">${item.tip}</div>
-          </div>
+          <div class="p-name">${t.name}</div>
+          <div class="p-sub">${t.loc} · ★ ${t.rating}</div>
+          <div class="p-desc">${t.desc}</div>
+          <div class="t-tip" style="margin-bottom:8px;">${t.tip}</div>
         </div>
-        <div class="place-footer">
-          <span class="day-match-pill">추천 코스</span>
-          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.query)}" target="_blank" style="color:#1B365D; font-weight:700; text-decoration:none;">
+        <div class="p-footer">
+          <span style="color:#1D4ED8; font-weight:700;">${t.badge}</span>
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.query)}" target="_blank" style="color:var(--blue); font-weight:700; text-decoration:none;">
             구글 지도 &rarr;
           </a>
         </div>
       `;
-      grid.appendChild(card);
+      wrap.appendChild(card);
     });
   }
 
-  // Hotel Rendering
   function renderHotels() {
-    const grid = document.getElementById('hotelGrid');
-    grid.innerHTML = '';
+    const wrap = document.getElementById('hotelCardsWrap');
+    wrap.innerHTML = '';
     hotelItems.forEach(h => {
       const card = document.createElement('div');
-      card.className = 'hotel-card' + (h.is_rec ? ' recommended' : '');
+      card.className = 'p-card';
       card.innerHTML = `
-        <div class="hotel-title">${h.name}</div>
-        <div class="hotel-ename">${h.ename} · ★ ${h.rating}</div>
-        <div class="hotel-badges">
-          <span class="h-badge price">💰 ${h.price}</span>
-          <span class="h-badge onsen">♨️ ${h.onsen}</span>
-          <span class="h-badge loc">📍 ${h.loc}</span>
-        </div>
-        <div class="hotel-desc">${h.desc}</div>
-        <div class="hotel-reason-box">🎯 추천 이유: ${h.reason}</div>
-      `;
-      grid.appendChild(card);
-    });
-  }
-
-  // Checklist Rendering
-  function renderChecklist() {
-    const container = document.getElementById('checklistItems');
-    container.innerHTML = '';
-    checklistData.forEach((item, idx) => {
-      const savedState = localStorage.getItem('fukuoka_check_' + idx) === 'true';
-      const div = document.createElement('div');
-      div.className = 'check-item';
-      div.onclick = (e) => {
-        if (e.target.tagName !== 'INPUT') {
-          const chk = document.getElementById('chk_' + idx);
-          chk.checked = !chk.checked;
-          toggleCheck(idx);
-        }
-      };
-      div.innerHTML = `
-        <input type="checkbox" id="chk_${idx}" class="check-box" ${savedState ? 'checked' : ''} onchange="toggleCheck(${idx})">
         <div>
-          <label for="chk_${idx}" class="check-label" style="${savedState ? 'text-decoration:line-through; color:#94A3B8;' : ''}">${item.title}</label>
-          <div class="check-sub">${item.desc}</div>
+          <div class="p-name">${h.name}</div>
+          <div class="p-sub">${h.ename} · ${h.loc}</div>
+          <div class="p-desc">${h.desc}</div>
+        </div>
+        <div class="p-footer">
+          <span style="font-weight:700; color:#7E22CE;">${h.badge}</span>
+          <span style="color:var(--text-mute);">${h.price}</span>
         </div>
       `;
-      container.appendChild(div);
+      wrap.appendChild(card);
     });
   }
 
-  function toggleCheck(idx) {
-    const chk = document.getElementById('chk_' + idx);
-    localStorage.setItem('fukuoka_check_' + idx, chk.checked);
+  function renderChecklist() {
+    const wrap = document.getElementById('checkCardsWrap');
+    wrap.innerHTML = '';
+    checklistData.forEach((item, idx) => {
+      const saved = localStorage.getItem('chk_' + idx) === 'true';
+      const div = document.createElement('div');
+      div.className = 'chk-item';
+      div.innerHTML = `
+        <input type="checkbox" class="chk-box" ${saved ? 'checked' : ''} onchange="toggleChk(${idx}, this.checked)">
+        <div>
+          <div class="chk-title" style="${saved ? 'text-decoration:line-through; color:#9CA3AF;' : ''}">${item.title}</div>
+          <div class="chk-desc">${item.desc}</div>
+        </div>
+      `;
+      wrap.appendChild(div);
+    });
+  }
+
+  function toggleChk(idx, state) {
+    localStorage.setItem('chk_' + idx, state);
     renderChecklist();
   }
 
-  // Tab switching
-  function showTab(tabId) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.bottom-bar-btn').forEach(b => b.classList.remove('active'));
+  function switchNav(tab) {
+    document.querySelectorAll('.tab-view').forEach(v => v.style.display = 'none');
+    document.querySelectorAll('.bar-btn').forEach(b => b.classList.remove('active'));
 
-    document.getElementById('tab-' + tabId).classList.add('active');
+    document.getElementById('view-' + tab).style.display = 'block';
 
-    // Update top nav
-    const activeNavBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(tabId));
-    if (activeNavBtn) activeNavBtn.classList.add('active');
-
-    // Update bottom bar
-    const bIdMap = {
-      'itinerary': 'bNavItinerary',
-      'food': 'bNavFood',
-      'tour': 'bNavTour',
-      'hotels': 'bNavHotels',
-      'checklist': 'bNavCheck'
+    const bMap = {
+      'itinerary': 'btnNavItinerary',
+      'food': 'btnNavFood',
+      'tour': 'btnNavTour',
+      'hotels': 'btnNavHotels',
+      'checklist': 'btnNavCheck'
     };
-    if (bIdMap[tabId]) {
-      const bBtn = document.getElementById(bIdMap[tabId]);
-      if (bBtn) bBtn.classList.add('active');
-    }
+    if (bMap[tab]) document.getElementById(bMap[tab]).classList.add('active');
 
-    if (tabId === 'itinerary' && map) {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 150);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (tab === 'itinerary' && map && isMapOpen) {
+      setTimeout(() => map.invalidateSize(), 150);
     }
   }
 
   window.addEventListener('DOMContentLoaded', () => {
     initMap();
     renderItinerary();
-    initFoodFilters();
     renderFood();
     renderTour();
     renderHotels();
     renderChecklist();
-
-    // Check if initial load is mobile
-    if (window.innerWidth <= 1024) {
-      setMobileView('split');
-    }
-
-    setInterval(() => {
-      document.querySelectorAll('ship-page-badge, [id*="ship-page"]').forEach(el => el.remove());
-    }, 200);
   });
 </script>
 
